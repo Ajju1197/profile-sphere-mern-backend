@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 // Router folder imported.
-app.use(require('./src/router/auth'));
+app.use(require('./router/auth'));
 
 // this is PORT
 const PORT = process.env.PORT || 5010;
