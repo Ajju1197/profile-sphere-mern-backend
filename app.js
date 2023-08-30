@@ -12,6 +12,7 @@ app.use(cors());
 
 // Router folder imported.
 app.use(require('./router/auth'));
+app.use(require('./router/userDetails'));
 
 // this is PORT
 const PORT = process.env.PORT || 5010;
