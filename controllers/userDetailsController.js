@@ -33,14 +33,26 @@ const getUserData = async (req, res) => {
     }
 }
 
+// Updating the single signup user data here.
+const updateUserData = async (req, res) => {
+    const updatedUserData = req.body;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, updatedUserData,{ new: true });
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        res.status(500).json({error:'Internal server error.'});
+    }
+}
+
+
 // Deleting the single signup user data here.
 const deleteUserData = async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.params.id);
-        return res.json(await User.find());
+        const userData = await User.findByIdAndDelete(req.params.id);
+        res.json(userData);
     } catch (error) {
         res.status(500).json({error:'Internal server error.'})
     }
 }
 
-module.exports = {getAboutUserDetails, getAllUserData, getUserData, deleteUserData};
+module.exports = {getAboutUserDetails, getAllUserData, getUserData, updateUserData, deleteUserData};

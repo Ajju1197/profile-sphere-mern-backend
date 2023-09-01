@@ -35,7 +35,7 @@ userSchema.statics.signup = async function(name, email, phone, work, password, c
     // Validation part
     if (!name || !email || !phone || !work || !password || !cpassword) throw Error('All fields are must be filled.');
     // if(!validator.isEmail(email)) throw Error('Email is not valid.');
-    if(!validator.isStrongPassword(password)) throw Error('Password is not strong enough.');
+    // if(!validator.isStrongPassword(password)) throw Error('Password is not strong enough.');
     if (password != cpassword) throw Error('Password is not matching.');
     
     // checking the user exits
