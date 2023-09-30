@@ -1,24 +1,29 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const {getAboutUserDetails, getAllUserData, getUserData, updateUserData, deleteUserData} = require('../controllers/userDetailsController')
-require('../db/conn');
-const Authenticate = require('../middleware/authenticate');
+import { getAllUserData, getUserData, updateUserData, deleteUserData, subscribe, unsubscribe, like, dislike} from '../controllers/userDetailsController.js';
+import  {Authenticate}  from '../middleware/authenticate.js';
+import { upload } from '../middleware/upload.js';
 
 // router.use(Authenticate);
-
-// router.get('https://profile-sphere-mern.cyclic.app/gettingTheUserDetails', (req, res) => {
-//     res.send(req.rootUser);
-//     res.status(200).json({ message: 'Welcome to the Nav page' });
-// });
-
-router.get(`/aboutUserDetails`, getAboutUserDetails);
 
 router.get('/getAllSignupUserData', getAllUserData);
 
 router.get('/getSingleSignupUserData/:id', getUserData);
 
-router.put('/updateSingleSignupUserData/:id', updateUserData);
+router.put('/updateSingleSignupUserData/:id', upload.single('profileImage'), updateUserData);
 
 router.delete('/deleteSingleSignupUserData/:id', deleteUserData);
 
-module.exports = router;
+//subscribe a user
+router.put("/sub/:id", subscribe);
+
+//unsubscribe a user
+router.put("/unsub/:id", unsubscribe);
+
+//like a video
+router.put("/like/:videoId", like);
+
+//dislike a video
+router.put("/dislike/:videoId", dislike);
+
+export default router;

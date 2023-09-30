@@ -1,19 +1,17 @@
-const express = require('express');
+import express from 'express';
+import { signUpAuth, loginAuth, logout } from '../controllers/authController.js';
+import { upload } from '../middleware/upload.js';
+
 const router = express.Router();
-const bcrypt = require('bcryptjs');
 
-require('../db/conn');
-const {loginAuth, signUpAuth} = require('../controllers/authController');
 
-// Routings
-router.get('/', (req, res) => {
-    res.send('Hello World')
-})
+// signup
+router.post('/signup', upload.single('profileImage'), signUpAuth);
+
+// logout
+router.put('/logout', logout);
 
 // Login route
 router.post('/login', loginAuth);
 
-// signup
-router.post('/signup', signUpAuth);
-
-module.exports = router;
+export default router;

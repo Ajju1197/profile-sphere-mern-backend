@@ -1,26 +1,30 @@
-const jwt = require('jsonwebtoken');
-const User = require('../model/userSchema');
+import jwt  from 'jsonwebtoken';
+import User from '../model/userSchema.js';
 
-const Authenticate = async (req, res, next) => {
+export const Authenticate = async (req, res, next) => {
     // verify authentication.
 
-    console.log(req);
-    const {authorization} = req.headers
+    // console.log(req);
+    const {authorization} = req.headers;
     
     if(!authorization){
-        return res.status(401).json({error: 'Authorization token is required.'})
+        return res.status(401).json({error: 'Authorization token is required.'});
     }
     
     const token = authorization.split(' ')[1];
     
     try {
-        const {_id} = jwt.verify(token, process.env.JWTSECRET_KEY);
+        jwt.verify(token, process.env.JWTSECRET_KEY, (err, user) =>{
+            if(err) return res.status(403).json({error: 'Token is not valid!'});
+            req.user = user;
+            next();
+        });
 
-        req.user = await User.findOne({_id}).select('_id');
-        next();
+        // const {_id} = jwt.verify(token, process.env.JWTSECRET_KEY);
+
+        // req.user = await User.findOne({_id}).select('_id');
+        // next();
     } catch (error) {
-        res.status(401).json({error: 'Request is not authorized.'})
+        res.status(401).json({error: 'Request is not authorized.'});
     }
 }
-
-module.exports = Authenticate;

@@ -1,18 +1,64 @@
-const dotenv = require('dotenv');
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Routes
+import auth from './router/auth.js';
+import userDetails from './router/userDetails.js';
+import about from './router/about.js';
+import commentRoute from './router/comments.js';
+import videoRoute from './router/videos.js';
+import blog from './router/blog.js';
+
 const app = express();
-const cookieParser = require('cookie-parser');
+dotenv.config({ path: './config.env' });
 
-dotenv.config({path: './config.env'});
-
+// app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json())
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 
-// Router folder imported.
-app.use(require('./router/auth'));
-app.use(require('./router/userDetails'));
+const __filename = fileURLToPath(import.meta.url); // Convert import.meta.url to a file path
+const __dirname = path.dirname(__filename); // Get the directory name from the file path
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
+
+// this MongoDB URI
+const DB = process.env.DATABASE;
+
+// Connecting the DataBase of MongoDB With Mongoose.
+mongoose.connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('DB connection success');
+}).catch(err => {
+    console.log(err + ' ' + 'no Connection');
+});
+
+//error handler
+app.use((err, req, res, next) => {
+    const status = err.status || 500;
+    const message = err.message || "Something went wrong!";
+    return res.status(status).json({
+        success: false,
+        status,
+        message,
+    });
+});
+
+app.use(auth);
+app.use(userDetails);
+app.use(about);
+app.use(blog);
+app.use(videoRoute);
+app.use(commentRoute);
 
 // this is PORT
 const PORT = process.env.PORT || 5010;

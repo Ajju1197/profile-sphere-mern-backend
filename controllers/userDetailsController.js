@@ -1,58 +1,141 @@
-const PersonalDataModel = require('../model/myPersonalData');
-const User = require('../model/userSchema');
-
-const getAboutUserDetails = async (req, res) => {
-    console.log(req);
-    try {
-        const data = await PersonalDataModel.find();
-        console.log(data);
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-}
+import User from '../model/userSchema.js';
+import Video from '../model/Video.js';
 
 // Getting the all signup users data here.
-const getAllUserData = async (req, res) => {
+export const getAllUserData = async (req, res) => {
     try {
-        const allSignupUsersData = await User.find();
-        res.status(200).json(allSignupUsersData);
+        const { q } = req.query;
+        const regex = new RegExp(`${q}`, "i");
+
+        const allSignupUsersData = await User.find({
+            $or: [ {name: regex},{email: regex}],
+        });
+
+        const sortUserData = allSignupUsersData.reverse();
+        
+        res.status(200).json(sortUserData);
     } catch (error) {
-        res.status(500).json({error:'Internal server error.'})
+        res.status(500).json({ error: 'Internal server error.' })
     }
 }
 
 // Getting the single signup user data here.
-const getUserData = async (req, res) => {
+export const getUserData = async (req, res) => {
     try {
         const signupUserData = await User.findById(req.params.id);
         res.json(signupUserData);
     } catch (error) {
-        res.status(500).json({error:'Internal server error.'})
+        res.status(500).json({ error: 'Internal server error.' })
     }
 }
 
 // Updating the single signup user data here.
-const updateUserData = async (req, res) => {
-    const updatedUserData = req.body;
+export const updateUserData = async (req, res, next) => {
+    console.log(req.user);
+    console.log(req.params);
+    const { id } = req.params;
+
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, updatedUserData,{ new: true });
+        // Check if the requested ID matches the logged-in user's ID
+        if (id !== req.user._id) {
+            return res.status(403).json({ error: "You can update only your account!" });
+        }
+
+        // Extract profileImage and other fields from the request body
+        const { ...updateFields } = req.body;
+
+        // If profileImage is provided, add it to the updateFields object
+        if (req.file) {
+            updateFields.profileImage = req.file.filename; //    Assuming you store the filename
+        }
+
+        // Update the user data in the database
+        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+
+        // Check if the user was found and updated
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         res.status(200).json(updatedUser);
     } catch (error) {
-        res.status(500).json({error:'Internal server error.'});
+        console.error('Error updating user data:', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
-}
+};
 
 
 // Deleting the single signup user data here.
-const deleteUserData = async (req, res) => {
-    try {
-        const userData = await User.findByIdAndDelete(req.params.id);
-        res.json(userData);
-    } catch (error) {
-        res.status(500).json({error:'Internal server error.'})
+export const deleteUserData = async (req, res, next) => {
+    if (req.params.id == req.user._id) {
+        try {
+            const userData = await User.findByIdAndDelete(req.params.id);
+            res.status(200).json(userData);
+        } catch (error) {
+            res.status(500).json({ error: 'Internal server error.' })
+        }
+    } else {
+        return res.status(403).json({ error: "You can delete only your account!" });
     }
 }
 
-module.exports = {getAboutUserDetails, getAllUserData, getUserData, updateUserData, deleteUserData};
+export const subscribe = async (req, res, next) => {
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $push: { subscribedUsers: req.params.id },
+        });
+        await User.findByIdAndUpdate(req.params.id, {
+            $inc: { subscribers: 1 },
+        });
+        res.status(200).json("Subscription successfull.")
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const unsubscribe = async (req, res, next) => {
+    try {
+        try {
+            await User.findByIdAndUpdate(req.user._id, {
+                $pull: { subscribedUsers: req.params.id },
+            });
+            await User.findByIdAndUpdate(req.params.id, {
+                $inc: { subscribers: -1 },
+            });
+            res.status(200).json("Unsubscription successfull.")
+        } catch (err) {
+            next(err);
+        }
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const like = async (req, res, next) => {
+    const id = req.user._id;
+    const videoId = req.params.videoId;
+    try {
+        await Video.findByIdAndUpdate(videoId, {
+            $addToSet: { likes: id },
+            $pull: { dislikes: id }
+        })
+        res.status(200).json("The video has been liked.")
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const dislike = async (req, res, next) => {
+    const id = req.user._id;
+    const videoId = req.params.videoId;
+    try {
+        await Video.findByIdAndUpdate(videoId, {
+            $addToSet: { dislikes: id },
+            $pull: { likes: id }
+        })
+        res.status(200).json("The video has been disliked.")
+    } catch (err) {
+        next(err);
+    }
+};
+
