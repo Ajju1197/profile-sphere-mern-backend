@@ -1,16 +1,9 @@
 [build]
-  functions = "functions" # This specifies the functions directory
-  command = "npm run build" # Specify the build command directly under [build]
+  functions = "functions"
+  command = "npm run build"
 
 [[redirects]]
   force = true
   from = "/api/*"
   status = 200
   to = "/.netlify/functions/:splat"
-
-[build.environment]
-  # You can set environment variables required for your build here
-  NODE_VERSION = "14"
-
-[functions]
-  # You have functions configuration here
