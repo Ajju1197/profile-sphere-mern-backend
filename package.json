@@ -5,7 +5,7 @@
   "main": "./functions/app.js",
   "type": "module",
   "scripts": {
-    "build": "netlify deploy --prod",
+    "build": "CI='' npm run build",
     "start": "node ./functions/app.js"
   },
   "keywords": [],
