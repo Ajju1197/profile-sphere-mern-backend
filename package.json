@@ -5,7 +5,7 @@
   "main": "./functions/app.js",
   "type": "module",
   "scripts": {
-    "build": "npm run build",
+    "build": "CI='' npm run build",
     "start": "node ./functions/app.js"
   },
   "keywords": [],
