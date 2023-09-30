@@ -6,14 +6,15 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import serverless from 'serverless-http';
 
 // Routes
-import auth from './router/auth.js';
-import userDetails from './router/userDetails.js';
-import about from './router/about.js';
-import commentRoute from './router/comments.js';
-import videoRoute from './router/videos.js';
-import blog from './router/blog.js';
+import auth from '../router/auth.js';
+import userDetails from '../router/userDetails.js';
+import about from '../router/about.js';
+import commentRoute from '../router/comments.js';
+import videoRoute from '../router/videos.js';
+import blog from '../router/blog.js';
 
 const app = express();
 dotenv.config({ path: './config.env' });
@@ -53,12 +54,14 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.use(auth);
-app.use(userDetails);
-app.use(about);
-app.use(blog);
-app.use(videoRoute);
-app.use(commentRoute);
+app.use('/api/', auth);
+app.use('/api/', userDetails);
+app.use('/api/', about);
+app.use('/api/', blog);
+app.use('/api/', videoRoute);
+app.use('/api/', commentRoute);
+
+export const handler = serverless(app);
 
 // this is PORT
 const PORT = process.env.PORT || 5010;
