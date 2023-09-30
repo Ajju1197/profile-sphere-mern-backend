@@ -1,8 +1,21 @@
 [build]
-    functions = "functions"
-    command = "npm run build"
+  functions = "functions" # This specifies the functions directory
+
 [[redirects]]
   force = true
   from = "/api/*"
   status = 200
-  to = "/.netlify/functions/api/getAllSignupUserData"
+  to = "/.netlify/functions/:splat"
+
+[build.environment]
+  # You can set environment variables required for your build here
+  NODE_VERSION = "14"
+
+[build.command]
+  # Your build command should be something like npm install and npm run build
+  # The specific commands may vary based on your project structure and needs
+  install = "npm install"
+  build = "npm run build"
+
+[functions]
+  # You have functions configuration here
