@@ -54,12 +54,12 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.use('/.netlify/functions/api/', auth);
-app.use('/.netlify/functions/api/', userDetails);
-app.use('/.netlify/functions/api/', about);
-app.use('/.netlify/functions/api/', blog);
-app.use('/.netlify/functions/api/', videoRoute);
-app.use('/.netlify/functions/api/', commentRoute);
+app.use('/api/', auth);
+app.use('/api/', userDetails);
+app.use('/api/', about);
+app.use('/api/', blog);
+app.use('/api/', videoRoute);
+app.use('/api/', commentRoute);
 
 export const handler = serverless(app);
 
