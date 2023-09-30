@@ -1,5 +1,8 @@
 [build]
   functions = "functions"
+  command = "npm run build"
+  publish = "public"
+  environment = { NODE_VERSION = "14" } # Specify the desired Node.js version
 
 [[redirects]]
   force = true
