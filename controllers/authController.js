@@ -35,7 +35,6 @@ export const loginAuth = async (req, res) => {
 
         res.cookie("auth_cookie", token, {
             httpOnly: true,
-            // secure: true,
             sameSite: "Lax",
         });
 
