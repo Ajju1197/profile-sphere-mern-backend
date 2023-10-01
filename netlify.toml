@@ -1,16 +1,8 @@
-[build]
-  functions = "functions" # Specify the functions directory where Netlify functions are located
-  command = "npm run build" # Specify your build command here
-
+[functions]
+  external_node_modules = ["express"]
+  node_bundler = "esbuild"
 [[redirects]]
   force = true
   from = "/api/*"
   status = 200
-  to = "/.netlify/functions/:splat"
-
-[build.environment]
-  # You can set environment variables required for your build here
-  NODE_VERSION = "14" # Specify the desired Node.js version
-
-[functions]
-  # You have functions configuration here
+  to = "/.netlify/functions/api/:splat"
