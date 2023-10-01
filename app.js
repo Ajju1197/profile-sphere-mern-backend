@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// import serverless from 'serverless-http';
 
 // Routes
 import auth from './router/auth.js';
@@ -61,7 +60,6 @@ app.use('/api', blog);
 app.use('/api', videoRoute);
 app.use('/api', commentRoute);
 
-// export const handler = serverless(app);
 
 // this is PORT
 const PORT = process.env.PORT || 5010;
