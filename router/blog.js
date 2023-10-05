@@ -2,7 +2,7 @@ import express from 'express';
 import { postBlogs, updateBlogs, deleteBlogs, getAllBlogsPosts, getSingleBlog, blogLike, blogDisLike } from "../controllers/blogController.js";
 import { upload } from '../middleware/upload.js';
 
-const router = express.Router();
+const router = express.Router()
 
 router.post('/postBlog', upload.single('image'), postBlogs);
 
