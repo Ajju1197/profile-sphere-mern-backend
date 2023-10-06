@@ -4,7 +4,7 @@ import { getAllUserData, getUserData, updateUserData, deleteUserData, subscribe,
 import  {Authenticate}  from '../middleware/authenticate.js';
 import { upload } from '../middleware/upload.js';
 
-// router.use(Authenticate);
+router.use(Authenticate);
 
 router.get('/getAllSignupUserData', getAllUserData);
 
