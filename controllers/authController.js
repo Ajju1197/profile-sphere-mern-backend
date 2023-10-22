@@ -15,27 +15,26 @@ export const loginAuth = async (req, res) => {
     const { email, password } = req.body;
 
     // Validation part
-    if (!email || !password) return res.status(403).json({error:'All fields are must be filled.'});
+    if (!email || !password) return next(createError(403, 'All fields are must be filled.'));
 
     // Checking if the email is exit
-    const user = await User.findOne({ email });
-    if (!user) return res.status(403).json({error: 'Incorrect email.'});
+    const loginUser = await User.findOne({ email });
+    if (!loginUser) return res.status(403).json({error: 'Incorrect email.'});
     
-    await User.findByIdAndUpdate(user._id, {$set: {isActive: true}}, { new : true})
+    await User.findByIdAndUpdate(loginUser._id, {$set: {isActive: true}}, { new : true})
 
     // Checking if the password is exit
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, loginUser.password);
     if (!match) return res.status(403).json({error:'Incorrect password.'});
 
     try {
 
-        const token = createToken(user._id);
+        const token = createToken(loginUser._id);
         console.log(token);
-        const { password, cpassword, ...others } = user._doc;
+        const { password, cpassword, ...user } = loginUser._doc;
 
         res.cookie("auth_cookie", token, {
             httpOnly: true,
-            sameSite: "Lax",
         });
 
         res.status(200).json({token, user, email, success:'Login is Successfull!'});
@@ -55,7 +54,7 @@ export const signUpAuth = async (req, res, next) => {
 
     // Validation part
     if (!name || !email || !phone || !work || !password || !cpassword) return res.status(400).json({ error: 'All fields are must be filled.' });
-    // if(!profileImage) return res.json({error: 'Please Upload Image.'});
+    if(!profileImage) return res.json({error: 'Please Upload Image.'});
     if (!validator.isEmail(email)) return res.status(400).json({ error: 'Email is not valid.' });
     if (!validator.isStrongPassword(password)) return res.status(400).json({ error: 'Password is not strong enough.' });
     if (password != cpassword) return res.status(400).json({ error: 'Password is not matching.' });

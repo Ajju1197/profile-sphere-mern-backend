@@ -2,7 +2,7 @@ import User from '../model/userSchema.js';
 import Video from '../model/Video.js';
 
 // Getting the all signup users data here.
-export const getAllUserData = async (req, res) => {
+export const getAllUserData = async (req, res, next) => {
     try {
         const { q } = req.query;
         const regex = new RegExp(`${q}`, "i");
@@ -15,7 +15,7 @@ export const getAllUserData = async (req, res) => {
         
         res.status(200).json(sortUserData);
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error.' })
+        next(error)
     }
 }
 
@@ -31,8 +31,8 @@ export const getUserData = async (req, res) => {
 
 // Updating the single signup user data here.
 export const updateUserData = async (req, res, next) => {
-    console.log(req.user);
-    console.log(req.params);
+    console.log('This is user',req.user);
+    // console.log(req.params);
     const { id } = req.params;
 
     try {
@@ -59,8 +59,7 @@ export const updateUserData = async (req, res, next) => {
 
         res.status(200).json(updatedUser);
     } catch (error) {
-        console.error('Error updating user data:', error);
-        res.status(500).json({ error: 'Internal server error.' });
+        next(error)
     }
 };
 
