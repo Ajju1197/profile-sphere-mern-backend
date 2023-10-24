@@ -1,3 +1,4 @@
 node_modules
 config.env
-"mongoose": "^6.10.1",
+"mongoose": "^6.10.1"
+.netlify

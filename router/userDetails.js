@@ -2,9 +2,22 @@ import express from 'express';
 const router = express.Router();
 import { getAllUserData, getUserData, updateUserData, deleteUserData, subscribe, unsubscribe, like, dislike} from '../controllers/userDetailsController.js';
 import  {Authenticate}  from '../middleware/authenticate.js';
-import { upload } from '../middleware/upload.js';
+import multer from 'multer';
 
+// Authentication for all routes
 router.use(Authenticate);
+
+// Image Uploads
+const storage = multer.diskStorage({
+    destination: 'uploads',
+    filename: function (req, file, cb) {
+        // const uniqueFilename = uuidv4() + path.extname(file.originalname);
+        cb(null, file.originalname); // Generate a unique filename for each uploaded image
+    },
+});
+
+export const upload = multer({ storage });
+
 
 router.get('/getAllSignupUserData', getAllUserData);
 

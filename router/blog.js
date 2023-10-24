@@ -1,6 +1,17 @@
 import express from 'express';
 import { postBlogs, updateBlogs, deleteBlogs, getAllBlogsPosts, getSingleBlog, blogLike, blogDisLike } from "../controllers/blogController.js";
-import { upload } from '../middleware/upload.js';
+import multer from 'multer';
+
+// Image Uploads
+const storage = multer.diskStorage({
+    destination: 'uploads',
+    filename: function (req, file, cb) {
+        // const uniqueFilename = uuidv4() + path.extname(file.originalname);
+        cb(null, file.originalname); // Generate a unique filename for each uploaded image
+    },
+});
+
+export const upload = multer({ storage });
 
 const router = express.Router()
 

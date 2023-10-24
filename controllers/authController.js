@@ -15,7 +15,7 @@ export const loginAuth = async (req, res) => {
     const { email, password } = req.body;
 
     // Validation part
-    if (!email || !password) return next(createError(403, 'All fields are must be filled.'));
+    if (!email || !password) return res.status(403).json({error: 'All fields are must be filled.'});
 
     // Checking if the email is exit
     const loginUser = await User.findOne({ email });
@@ -72,7 +72,7 @@ export const signUpAuth = async (req, res, next) => {
         // finally creating the user register data.
         const user = await new User({ ...req.body, password: hashPass, cpassword: hashCPass, profileImage });
         await user.save();
-        res.status(200).json({ user, success: 'User registered successfully.'});
+        res.status(200).json({ success: 'User registered successfully.'});
 
     } catch (error) {
         res.status(400).json({error: 'Something went wrong.'});

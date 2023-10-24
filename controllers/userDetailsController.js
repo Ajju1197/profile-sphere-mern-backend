@@ -31,7 +31,7 @@ export const getUserData = async (req, res) => {
 
 // Updating the single signup user data here.
 export const updateUserData = async (req, res, next) => {
-    console.log('This is user',req.user);
+    console.log('This is user', req.user);
     // console.log(req.params);
     const { id } = req.params;
 
