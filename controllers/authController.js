@@ -72,7 +72,7 @@ export const signUpAuth = async (req, res, next) => {
         // finally creating the user register data.
         const user = await new User({ ...req.body, password: hashPass, cpassword: hashCPass, profileImage });
         await user.save();
-        res.status(200).json({ success: 'User registered successfully.'});
+        res.status(200).json({userData:user, success: 'User registered successfully.'});
 
     } catch (error) {
         res.status(400).json({error: 'Something went wrong.'});
