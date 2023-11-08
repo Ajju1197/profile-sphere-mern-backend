@@ -8,7 +8,7 @@ export const getAllUserData = async (req, res, next) => {
         const regex = new RegExp(`${q}`, "i");
 
         const allSignupUsersData = await User.find({
-            $or: [ {name: regex},{email: regex}],
+            $or: [ {name: regex}, {email: regex}],
         });
 
         const sortUserData = allSignupUsersData.reverse();
@@ -25,21 +25,17 @@ export const getUserData = async (req, res) => {
         const signupUserData = await User.findById(req.params.id);
         res.json(signupUserData);
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error.' })
+        res.status(500).json({ error: error});
     }
 }
 
 // Updating the single signup user data here.
 export const updateUserData = async (req, res, next) => {
-    console.log('This is user', req.user);
-    // console.log(req.params);
     const { id } = req.params;
 
     try {
         // Check if the requested ID matches the logged-in user's ID
-        if (id !== req.user._id) {
-            return res.status(403).json({ error: "You can update only your account!" });
-        }
+        if (id !== req.user._id) return res.status(403).json({ error: "You can update only your account!" });
 
         // Extract profileImage and other fields from the request body
         const { ...updateFields } = req.body;

@@ -40,12 +40,13 @@ export const deleteBlogs = async (req, res) => {
 }
 
 export const getAllBlogsPosts = async (req, res) => {
-    const pages = req.query.page || 0;
-    const blogsPerPage = 3;
-
-    // const allBlogs = await Blog.find().skip(pages * blogsPerPage).limit(blogsPerPage);
-    const allBlogs = await Blog.find();
+    const {blog} = req.query;
+    
     try {
+        const regex = new RegExp(`${blog}`, 'i');
+        const allBlogs = await Blog.find({
+            $or: [{title : regex}]
+        });
         if (!allBlogs) res.status(403).json({ error: 'No blog posts found.' });
         res.json(allBlogs.reverse());
     } catch (error) {
@@ -70,6 +71,7 @@ export const blogLike = async (req, res, next) => {
     const blogId = req.params.id;
     try {
         const updatedBlog = await Blog.findByIdAndUpdate(blogId, {
+            $pull: { dislikes: userId },
             $push: { likes: userId },
         },{new: true});
         res.status(200).json({updatedBlog, success:"The Blog has been liked."})
@@ -84,6 +86,7 @@ export const blogDisLike = async (req, res, next) => {
     try {
         const updatedBlog = await Blog.findByIdAndUpdate(blogId, {
             $pull: { likes: userId },
+            $push:{dislikes: userId},
         },{new: true})
         res.status(200).json({updatedBlog, success:"The Blog has been liked."})
     } catch (err) {
