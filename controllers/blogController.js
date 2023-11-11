@@ -1,4 +1,6 @@
 import Blog from "../model/Blog.js";
+import Comment from "../model/Comment.js";
+
 
 
 export const postBlogs = async (req, res) => {
@@ -74,7 +76,7 @@ export const blogLike = async (req, res, next) => {
             $pull: { dislikes: userId },
             $push: { likes: userId },
         },{new: true});
-        res.status(200).json({updatedBlog, success:"The Blog has been liked."})
+        res.status(200).json({updatedBlog, success:"The blog has been liked."})
     } catch (err) {
         res.status(500).json({error:'Internal server error!'})
     }
@@ -88,8 +90,21 @@ export const blogDisLike = async (req, res, next) => {
             $pull: { likes: userId },
             $push:{dislikes: userId},
         },{new: true})
-        res.status(200).json({updatedBlog, success:"The Blog has been liked."})
+        res.status(200).json({updatedBlog, success:"The blog has been disliked."})
     } catch (err) {
         res.status(500).json({error:'Internal server error!'})
     }
 };
+
+export const commentOnBlog = async(req, res, next) => {
+    try {
+
+        let newComment = new Comment({...req.body, userId: req.user._id});
+        const savedComment = await newComment.save();
+        res.json({savedComment, success: 'Comment posted successfully.'});
+
+    } catch (error) {
+        next(error);
+    }
+
+}
