@@ -2,15 +2,14 @@ import mongoose from "mongoose";
 
 const CommentSchema = new mongoose.Schema(
     {
-        userId: {
-            type: String,
+        user: {
+            type: Object,
             required: true,
         },
-        videoId: {
+        blogId: {
             type: String,
-            required: true,
         },
-        desc: {
+        comment: {
             type: String,
             required: true,
         },

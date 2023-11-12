@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 import auth from './router/auth.js';
 import userDetails from './router/userDetails.js';
 import about from './router/about.js';
-import commentRoute from './router/comments.js';
+import blogCommentRoute from './router/blogComments.js';
 import videoRoute from './router/videos.js';
 import blog from './router/blog.js';
 
@@ -58,7 +58,7 @@ app.use('/api', userDetails);
 app.use('/api', about);
 app.use('/api', blog);
 app.use('/api', videoRoute);
-app.use('/api', commentRoute);
+app.use('/api', blogCommentRoute);
 
 
 // this is PORT

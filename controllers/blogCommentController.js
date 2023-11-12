@@ -1,9 +1,13 @@
 import { createError } from "../error.js";
+import Blog from "../model/Blog.js";
 import Comment from "../model/Comment.js";
-import Video from "../model/Video.js";
+import User from '../model/userSchema.js';
+
 
 export const addComment = async (req, res, next) => {
-    const newComment = new Comment({ ...req.body, userId: req.user.id });
+    const user = await User.findById(req.user._id);
+    const {phone, work, password, cpassword, subscribers, subscribedUsers, fromGoogle, isActive, createdAt, updatedAt, ...others} = user._doc;
+    const newComment = new Comment({ ...req.body, user: others });
     try {
         const savedComment = await newComment.save();
         res.status(200).send(savedComment);
@@ -15,8 +19,8 @@ export const addComment = async (req, res, next) => {
 export const deleteComment = async (req, res, next) => {
     try {
         const comment = await Comment.findById(res.params.id);
-        const video = await Video.findById(res.params.id);
-        if (req.user.id === comment.userId || req.user.id === video.userId) {
+        const blog = await Blog.findById(res.params.id);
+        if (req.user._id === comment.userId || req.user._id === blog.userId) {
             await Comment.findByIdAndDelete(req.params.id);
             res.status(200).json("The comment has been deleted.");
         } else {
@@ -29,8 +33,9 @@ export const deleteComment = async (req, res, next) => {
 
 export const getComments = async (req, res, next) => {
     try {
-        const comments = await Comment.find({ videoId: req.params.videoId });
-        res.status(200).json(comments);
+        const comments = await Comment.find({ blogId: req.params.blogId });
+        console.log(comments);
+        res.status(200).json(comments.reverse());
     } catch (err) {
         next(err);
     }
