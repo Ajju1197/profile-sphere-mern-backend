@@ -6,7 +6,7 @@ import { createError } from '../error.js';
 
 // Creating the token
 const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.JWTSECRET_KEY, { expiresIn: '3d' });
+    return jwt.sign({ _id }, process.env.JWTSECRET_KEY, { expiresIn: '1d' });
 }
 
 
@@ -30,6 +30,7 @@ export const loginAuth = async (req, res) => {
     try {
 
         const token = createToken(loginUser._id);
+        const expirationDate = new Date(Date.now() + 86_400_000 );
         console.log(token);
         const { password, cpassword, ...user } = loginUser._doc;
 
@@ -37,7 +38,7 @@ export const loginAuth = async (req, res) => {
             httpOnly: true,
         });
 
-        res.status(200).json({token, user, email, success:'Login is Successfull!'});
+        res.status(200).json({token, expiresAt: expirationDate, user, email, success:'Login is Successfull!'});
 
     } catch (error) {
         res.status(400).json({ error: error.message });
